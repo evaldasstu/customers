@@ -1,0 +1,24 @@
+th {
+  user-select: none; /* Disable header text selection when sorting */
+}
+
+.sort-indicator {
+  width: 1rem;
+}
+
+.sort-indicator--asc::after {
+  content: '↑';
+}
+
+.sort-indicator--desc::after {
+  content: '↓';
+}
+
+.sort-indicator--unsorted::after {
+  color: #bbb;
+  content: '⇅';
+}
+
+span.btn {
+  line-height: 1;
+}

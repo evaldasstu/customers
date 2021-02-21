@@ -3,7 +3,7 @@ th {
 }
 
 .sort-indicator {
-  width: 1rem;
+  width: 1.125rem;
 }
 
 .sort-indicator--asc::after {

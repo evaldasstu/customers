@@ -1,13 +1,26 @@
 import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 import { useTable, useSortBy } from 'react-table';
-import './Grid.css';
+import './CustomersGrid.css';
 
-function Grid(props) {
+export const CustomersGrid = (props) => {
+  const customers = useSelector((state) => state.customers);
+  const data = useMemo(() => customers, [customers]);
+
+  // Style numeric columns
+  const alignRight = useMemo(() => {
+    return {
+      header: 'flex-grow-1 text-right',
+      cell: 'd-inline-block w-100 text-right',
+    };
+  }, []);
+
+  // Setup table header and cell rendering
   const columns = useMemo(
     () => [
       {
-        accessor: 'name', // accessor is the "key" in the data
+        accessor: 'name',
         Header: 'Full name',
       },
       {
@@ -26,33 +39,28 @@ function Grid(props) {
       },
       {
         accessor: 'house',
-        Header: () => <span className="flex-grow-1 text-right">House no.</span>,
-        Cell: ({ value }) => (
-          <span className="d-inline-block w-100 text-right">{value}</span>
-        ),
+        Header: () => <span className={alignRight.header}>House no.</span>,
+        Cell: ({ value }) => <span className={alignRight.cell}>{value}</span>,
       },
       {
         accessor: 'zip',
-        Header: () => <span className="flex-grow-1 text-right">Zip</span>,
-        Cell: ({ value }) => (
-          <span className="d-inline-block w-100 text-right">{value}</span>
-        ),
+        Header: () => <span className={alignRight.header}>Zip</span>,
+        Cell: ({ value }) => <span className={alignRight.cell}>{value}</span>,
       },
       {
         id: 'coordinates',
-        accessor: (original) => `${original.lat}, ${original.lng}`,
-        Header: () => (
-          <span className="flex-grow-1 text-right">Coordinates</span>
-        ),
-        Cell: ({ row, value }) => (
-          <span className="d-inline-block w-100 text-right">
-            <a
-              href={`https://www.google.com/maps/place/${row.original.lat},${row.original.lng}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {value}
-            </a>
+        Header: () => <span className={alignRight.header}>Coordinates</span>,
+        Cell: ({ row }) => (
+          <span className={alignRight.cell}>
+            {row.original.lat && (
+              <a
+                href={`https://www.google.com/maps/place/${row.original.lat},${row.original.lng}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {row.original.lat}, {row.original.lng}
+              </a>
+            )}
           </span>
         ),
       },
@@ -63,13 +71,13 @@ function Grid(props) {
           <>
             <span
               className="btn btn-link align-baseline p-0 mr-3"
-              onClick={() => props.handleEdit(row.index)}
+              onClick={() => props.onEditClicked(row.original.id)}
             >
               Edit
             </span>
             <span
               className="btn btn-link align-baseline p-0 text-danger"
-                onClick={() => props.handleDelete(row.index)}
+              onClick={() => props.onDeleteClicked(row.original.id)}
             >
               Delete
             </span>
@@ -77,49 +85,34 @@ function Grid(props) {
         ),
       },
     ],
-    [props]
+    [props, alignRight]
   );
 
-  const data = useMemo(
-    () => [
-      {
-        name: 'John Doe',
-        email: 'john.doe@gmail.com',
-        city: 'Vilnius',
-        street: 'Gedimino pr.',
-        house: '7',
-        zip: '12345',
-        lat: '54.68926',
-        lng: '25.27542',
-      },
-      {
-        name: 'Jane Doe',
-        email: 'jane.doe@gmail.com',
-        city: 'Kaunas',
-        street: 'Kęstučio g.',
-        house: '14',
-        zip: '01234',
-        lat: '54.90238',
-        lng: '23.93476',
-      },
-      {
-        name: 'Samantha Goldsmith-Longbottom',
-        email: 'samantha@longemailindustries.com',
-        city: 'San Antonio',
-        street: 'Washington Blvd.',
-        house: '140',
-        zip: '24352',
-        lat: '54.90238',
-        lng: '23.93476',
-      },
-    ],
-    []
-  );
+  // Case-insensitive sorting
+  const compareIgnoreCase = (a, b) => {
+    let r1 = a.toLowerCase();
+    let r2 = b.toLowerCase();
+    if (r1 < r2) {
+      return -1;
+    }
+    if (r1 > r2) {
+      return 1;
+    }
+    return 0;
+  };
 
   const { headers, rows, prepareRow } = useTable(
     {
       columns,
       data,
+      sortTypes: {
+        alphanumeric: (row1, row2, columnName) => {
+          return compareIgnoreCase(
+            row1.values[columnName],
+            row2.values[columnName]
+          );
+        },
+      },
     },
     useSortBy
   );
@@ -143,7 +136,7 @@ function Grid(props) {
                           ? 'sort-indicator--desc'
                           : 'sort-indicator--asc'
                         : 'sort-indicator--unsorted'
-                    } `}
+                    }`}
                   ></div>
                 )}
               </div>
@@ -151,6 +144,7 @@ function Grid(props) {
           ))}
         </tr>
       </thead>
+
       <tbody>
         {rows.map((row) => {
           prepareRow(row);
@@ -163,6 +157,7 @@ function Grid(props) {
           );
         })}
       </tbody>
+
       {!data.length && (
         <tfoot>
           <tr>
@@ -172,6 +167,4 @@ function Grid(props) {
       )}
     </Table>
   );
-}
-
-export default Grid;
+};

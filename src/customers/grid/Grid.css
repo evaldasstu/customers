@@ -1,5 +1,5 @@
 th {
-  user-select: none; /* Disable header text selection when sorting */
+  user-select: none; /* Disable header text selection when clicking to change sort */
 }
 
 .sort-indicator {

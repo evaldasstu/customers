@@ -1,4 +1,5 @@
 // Case-insensitive sorting
+
 const compareIgnoreCase = (a, b) => {
   let r1 = (a && a.toLowerCase()) || '';
   let r2 = (b && b.toLowerCase()) || '';

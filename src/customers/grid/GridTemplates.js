@@ -1,7 +1,8 @@
-// Template components for custom table header and cell rendering
 import React from 'react';
 
-export const CustomHeader = (props, alignRight) => {
+// Custom table headers and cells
+
+const CustomHeader = (props, alignRight) => {
   return (
     <span className={alignRight && 'flex-grow-1 text-right'}>
       {props.children}
@@ -9,7 +10,7 @@ export const CustomHeader = (props, alignRight) => {
   );
 };
 
-export const CustomCell = (props, alignRight) => {
+const CustomCell = (props, alignRight) => {
   return (
     <span className={alignRight && 'd-inline-block w-100 text-right'}>
       {props.children}
@@ -17,7 +18,7 @@ export const CustomCell = (props, alignRight) => {
   );
 };
 
-export const Coordinates = ({ lat, lng }) => {
+const Coordinates = ({ lat, lng }) => {
   return (
     <>
       {lat && (
@@ -33,7 +34,7 @@ export const Coordinates = ({ lat, lng }) => {
   );
 };
 
-export const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
+const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
   return (
     <>
       <span
@@ -54,4 +55,59 @@ export const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
       </span>
     </>
   );
+};
+
+// Set up grid columns. Accessor means "key".
+
+export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
+  return [
+    {
+      accessor: 'name',
+      Header: 'Full name',
+    },
+    {
+      accessor: 'email',
+      Header: 'Email',
+      Cell: ({ value }) => <a href={`mailto:${value}`}>{value}</a>,
+    },
+
+    {
+      accessor: 'city',
+      Header: 'City',
+    },
+    {
+      accessor: 'street',
+      Header: 'Street',
+    },
+    {
+      accessor: 'house',
+      Header: () => <CustomHeader alignRight>House no.</CustomHeader>,
+      Cell: ({ value }) => <CustomCell alignRight>{value}</CustomCell>,
+    },
+    {
+      accessor: 'zip',
+      Header: () => <CustomHeader alignRight>Zip</CustomHeader>,
+      Cell: ({ value }) => <CustomCell alignRight>{value}</CustomCell>,
+    },
+    {
+      accessor: 'coordinates',
+      Header: () => <CustomHeader alignRight>Coordinates</CustomHeader>,
+      Cell: ({ row }) => (
+        <CustomCell alignRight>
+          <Coordinates lat={row.original.lat} lng={row.original.lng} />
+        </CustomCell>
+      ),
+    },
+    {
+      accessor: 'actions',
+      disableSortBy: true,
+      Cell: ({ row }) => (
+        <Actions
+          customer={row.original}
+          {...{ onEditClicked }}
+          {...{ onDeleteClicked }}
+        />
+      ),
+    },
+  ];
 };

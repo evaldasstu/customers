@@ -41,13 +41,12 @@ function Customers() {
 
   function onSaveConfirmed(customer) {
     if (action === 'add') {
-      // Generate unique pseudo id
-      // Should be done by API in a real world scenario
-      customer.id = nanoid();
+      customer.id = nanoid(); // Generate unique id
       addCustomer(customer);
     } else {
       updateCustomer(customer);
     }
+    console.log(getCustomers());
     onModalClosed();
   }
 

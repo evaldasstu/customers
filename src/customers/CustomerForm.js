@@ -1,61 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
-import { customerAdded, customerUpdated } from './customersSlice';
 
-export const CustomerForm = (props) => {
-  const customer = useSelector((state) =>
-    state.customers.find((customer) => customer.id === props.selectedId)
-  );
+const CustomerForm = ({
+  selectedCustomer,
+  action,
+  onSaveConfirmed,
+  onModalClosed,
+}) => {
+  const [customer, setCustomer] = useState(selectedCustomer);
 
-  const dispatch = useDispatch();
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [city, setCity] = useState('');
-  const [street, setStreet] = useState('');
-  const [house, setHouse] = useState('');
-  const [zip, setZip] = useState('');
-  const [lat, setLat] = useState('');
-  const [lng, setLng] = useState('');
-
-  const [coordinates, setCoordinates] = useState('');
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
+  const [coordinates, setCoordinates] = useState(null);
   const [validated, setValidated] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    if (modalOpen && customer) {
-      setName(customer.name);
-      setEmail(customer.email);
-      setCity(customer.city);
-      setStreet(customer.street);
-      setHouse(customer.house);
-      setZip(customer.zip);
-      setLat(customer.lat);
-      setLng(customer.lng);
-    }
-  }, [modalOpen, customer]);
-
-  const clearForm = () => {
-    setName('');
-    setEmail('');
-    setCity('');
-    setStreet('');
-    setHouse('');
-    setZip('');
-    setLat('');
-    setLng('');
-  };
+    setModalOpen(action === 'add' || action === 'update');
+  }, [action]);
 
   useEffect(() => {
-    setCoordinates(lat ? `${lat}, ${lng}` : '');
-  }, [lat, lng]);
+    setCustomer(selectedCustomer);
+  }, [selectedCustomer]);
 
-  useEffect(() => {
-    setModalOpen(props.action === 'add' || props.action === 'update');
-  }, [props]);
-
-  // Focus on input when modal is visible
   const firstInput = useRef();
   useEffect(() => {
     if (modalOpen) {
@@ -63,56 +30,39 @@ export const CustomerForm = (props) => {
     }
   }, [modalOpen]);
 
-  const onModalClosed = () => {
+  useEffect(() => {
+    setCoordinates(lat ? `${lat}, ${lng}` : '');
+  }, [lat, lng]);
+
+  const onHide = () => {
+    onModalClosed();
     setValidated(false);
-    clearForm();
-    props.onModalClosed();
   };
 
+  // Make Bootstrap work with native HTML5 form validation
   const onSubmit = (e) => {
-    // Native HTML5 form validation based on
-    // https://react-bootstrap.github.io/components/forms/#forms-validation-native
-
     setValidated(true);
     if (e.currentTarget.checkValidity() === false) {
       e.preventDefault();
       e.stopPropagation();
     } else {
-      // Add a new customer to the store
-      if (props.action === 'add') {
-        dispatch(
-          customerAdded(name, email, city, street, house, zip, lat, lng)
-        );
-      } else {
-        // Update existing customer
-        dispatch(
-          customerUpdated({
-            id: props.selectedId,
-            name,
-            email,
-            city,
-            street,
-            house,
-            zip,
-            lat,
-            lng,
-          })
-        );
-      }
+      onSaveConfirmed(customer);
       onModalClosed();
+      e.preventDefault();
+      setValidated(false);
     }
   };
 
   return (
     <Modal
       show={modalOpen}
-      onHide={() => onModalClosed()}
+      {...{ onHide }}
       animation={false}
       backdrop="static"
       centered
     >
       <Modal.Header closeButton>
-        {props.action === 'add' ? (
+        {action === 'add' ? (
           <Modal.Title>New customer</Modal.Title>
         ) : (
           <Modal.Title>Edit customer</Modal.Title>
@@ -126,8 +76,10 @@ export const CustomerForm = (props) => {
               Full name <span className="text-danger">*</span>
             </Form.Label>
             <Form.Control
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={customer.name || ''}
+              onChange={(e) => {
+                setCustomer({ ...customer, name: e.target.value });
+              }}
               ref={firstInput}
               required
             />
@@ -140,8 +92,10 @@ export const CustomerForm = (props) => {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={customer.email || ''}
+              onChange={(e) => {
+                setCustomer({ ...customer, email: e.target.value });
+              }}
             />
             <Form.Control.Feedback type="invalid">
               Invalid email format.
@@ -152,16 +106,20 @@ export const CustomerForm = (props) => {
             <Form.Group as={Col} controlId="city">
               <Form.Label>City</Form.Label>
               <Form.Control
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                value={customer.city || ''}
+                onChange={(e) =>
+                  setCustomer({ ...customer, city: e.target.value })
+                }
               />
             </Form.Group>
 
             <Form.Group as={Col} controlId="street">
               <Form.Label>Street</Form.Label>
               <Form.Control
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
+                value={customer.street || ''}
+                onChange={(e) =>
+                  setCustomer({ ...customer, street: e.target.value })
+                }
               />
             </Form.Group>
           </Form.Row>
@@ -170,16 +128,20 @@ export const CustomerForm = (props) => {
             <Form.Group as={Col} controlId="house">
               <Form.Label>House number</Form.Label>
               <Form.Control
-                value={house}
-                onChange={(e) => setHouse(e.target.value)}
+                value={customer.house || ''}
+                onChange={(e) =>
+                  setCustomer({ ...customer, house: e.target.value })
+                }
               />
             </Form.Group>
 
             <Form.Group as={Col} controlId="zip">
               <Form.Label>Zip code</Form.Label>
               <Form.Control
-                value={zip}
-                onChange={(e) => setZip(e.target.value)}
+                value={customer.zip || ''}
+                onChange={(e) =>
+                  setCustomer({ ...customer, zip: e.target.value })
+                }
               />
             </Form.Group>
           </Form.Row>
@@ -191,7 +153,7 @@ export const CustomerForm = (props) => {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={onModalClosed}>
+          <Button variant="secondary" onClick={onHide}>
             Cancel
           </Button>
 
@@ -203,3 +165,5 @@ export const CustomerForm = (props) => {
     </Modal>
   );
 };
+
+export default CustomerForm;

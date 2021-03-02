@@ -44,7 +44,7 @@ const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
   return (
     <>
       <span
-        className="btn btn-link align-baseline p-0 mr-3"
+        className="btn btn-link align-baseline p-0"
         onClick={() => onEditClicked(customer)}
         role="link"
         tabIndex="0"
@@ -52,7 +52,7 @@ const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
         Edit
       </span>
       <span
-        className="btn btn-link align-baseline p-0 text-danger"
+        className="btn btn-link align-baseline p-0 text-danger ml-3"
         onClick={() => onDeleteClicked(customer)}
         role="link"
         tabIndex="0"
@@ -111,11 +111,13 @@ export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
       accessor: 'actions',
       disableSortBy: true,
       Cell: ({ row }) => (
-        <Actions
-          customer={row.original}
-          {...{ onEditClicked }}
-          {...{ onDeleteClicked }}
-        />
+        <CustomCell alignRight>
+          <Actions
+            customer={row.original}
+            {...{ onEditClicked }}
+            {...{ onDeleteClicked }}
+          />
+        </CustomCell>
       ),
     },
   ];

@@ -149,7 +149,7 @@ const CustomerForm = ({
             <Form.Label>Predicted location</Form.Label>
             <Form.Control
               value={coordinates ? `${coordinates[0]}, ${coordinates[1]}` : ''}
-              placeholder={isError ? 'Could not fetch coordinates' : ''}
+              placeholder={isError ? 'Could not fetch coordinates (check README for more info)' : ''}
               disabled
             />
           </Form.Group>

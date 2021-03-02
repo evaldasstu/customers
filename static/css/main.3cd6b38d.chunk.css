@@ -1,0 +1,2 @@
+th{-webkit-user-select:none;-ms-user-select:none;user-select:none}.sort-indicator{width:1.125rem}.sort-indicator--asc:after{content:"↑"}.sort-indicator--desc:after{content:"↓"}.sort-indicator--unsorted:after{color:#bbb;content:"⇅"}.cell-text--truncate{display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:20vw}span.btn{line-height:1}@media (max-width:767px){html{font-size:.875rem}}@media (max-width:575px){html{font-size:.75rem}}
+/*# sourceMappingURL=main.3cd6b38d.chunk.css.map */

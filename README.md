@@ -18,7 +18,7 @@ Deployed app is available online at [https://evaldasstu.github.io/customers](htt
 
 `git clone https://github.com/evaldasstu/customers.git`
 
-or by downloading and extracting [master.zip]([https://github.com/evaldasstu/customers/archive/master.zip]).
+or by downloading and extracting [master.zip](https://github.com/evaldasstu/customers/archive/master.zip).
 
 * Open app's directory: `cd customers`
 

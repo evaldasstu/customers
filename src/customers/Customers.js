@@ -20,10 +20,6 @@ function Customers() {
     updateCustomer,
   } = useCustomers();
 
-  useEffect(() => {
-    getCustomers();
-  }, [getCustomers]);
-
   const onNewCustomerClicked = () => {
     selectCustomer({});
     setAction('add');
@@ -39,16 +35,16 @@ function Customers() {
     setAction('delete');
   };
 
-  function onSaveConfirmed(customer) {
+  const onSaveConfirmed = (customer) => {
     if (action === 'add') {
-      customer.id = nanoid(); // Generate unique id
+      // Generate unique id
+      customer.id = nanoid();
       addCustomer(customer);
     } else {
       updateCustomer(customer);
     }
-    console.log(getCustomers());
     onModalClosed();
-  }
+  };
 
   const onDeleteConfirmed = () => {
     deleteCustomer(customerToDelete);
@@ -61,6 +57,10 @@ function Customers() {
     setCustomerToDelete(null);
     setAction(null);
   };
+
+  useEffect(() => {
+    getCustomers();
+  }, [getCustomers]);
 
   return (
     <Container fluid="xl">

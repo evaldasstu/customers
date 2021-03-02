@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Custom table headers and cells
+// Presets
 
 const CustomHeader = (props, alignRight) => {
   return (
@@ -11,11 +11,17 @@ const CustomHeader = (props, alignRight) => {
 };
 
 const CustomCell = (props, alignRight) => {
-  return (
-    <span className={alignRight && 'd-inline-block w-100 text-right'}>
-      {props.children}
-    </span>
-  );
+  let className = '';
+  if (props.bold) {
+    className += 'font-weight-bolder ';
+  }
+  if (props.alignRight) {
+    className += 'd-inline-block w-100 text-right';
+  }
+  if (props.truncate) {
+    className += 'cell-text--truncate ';
+  }
+  return <span {...{ className }}>{props.children}</span>;
 };
 
 const Coordinates = ({ lat, lng }) => {
@@ -57,7 +63,7 @@ const Actions = ({ onEditClicked, onDeleteClicked, customer }) => {
   );
 };
 
-// Set up grid columns. Accessor means "key".
+// Column specification
 
 export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
   return [
@@ -68,9 +74,12 @@ export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
     {
       accessor: 'email',
       Header: 'Email',
-      Cell: ({ value }) => <a href={`mailto:${value}`}>{value}</a>,
+      Cell: ({ value }) => (
+        <CustomCell truncate>
+          <a href={`mailto:${value}`}>{value}</a>
+        </CustomCell>
+      ),
     },
-
     {
       accessor: 'city',
       Header: 'City',
@@ -81,7 +90,7 @@ export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
     },
     {
       accessor: 'house',
-      Header: () => <CustomHeader alignRight>House no.</CustomHeader>,
+      Header: () => <CustomHeader alignRight>House</CustomHeader>,
       Cell: ({ value }) => <CustomCell alignRight>{value}</CustomCell>,
     },
     {
@@ -91,7 +100,7 @@ export const columnSetup = ({ onEditClicked, onDeleteClicked }) => {
     },
     {
       accessor: 'coordinates',
-      Header: () => <CustomHeader alignRight>Coordinates</CustomHeader>,
+      Header: () => <CustomHeader alignRight>Location</CustomHeader>,
       Cell: ({ row }) => (
         <CustomCell alignRight>
           <Coordinates lat={row.original.lat} lng={row.original.lng} />

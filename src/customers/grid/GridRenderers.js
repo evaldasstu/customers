@@ -1,11 +1,12 @@
-// Grid data rendering
 import React from 'react';
+
+// Table structure
 
 export const Header = ({ column }) => {
   return (
     <th
       {...column.getHeaderProps(column.getSortByToggleProps())}
-      className="text-nowrap"
+      className="text-nowrap px-2"
     >
       <div className="d-flex align-items-center">
         {column.render('Header')}
@@ -30,5 +31,5 @@ export const Row = (props) => {
   };
 
 export const Cell = ({ cell }) => {
-  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+  return <td {...cell.getCellProps()} className="p-2">{cell.render('Cell')}</td>;
 };

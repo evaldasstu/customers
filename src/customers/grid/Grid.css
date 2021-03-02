@@ -19,6 +19,13 @@ th {
   content: '⇅';
 }
 
+.cell-text--truncate {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 20vw;
+}
+
 span.btn {
   line-height: 1;
 }

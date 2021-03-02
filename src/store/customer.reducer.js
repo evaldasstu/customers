@@ -1,9 +1,10 @@
 import {
+  ADD_CUSTOMER,
+  UPDATE_CUSTOMER,
   SELECT_CUSTOMER,
   LOAD_CUSTOMER,
-  UPDATE_CUSTOMER,
   DELETE_CUSTOMER,
-  ADD_CUSTOMER,
+
 } from './customer.actions';
 
 export const customersReducer = (state = { data: [] }, action) => {

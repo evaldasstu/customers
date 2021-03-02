@@ -1,0 +1,13 @@
+/* Responsive font sizes */
+
+@media (max-width: 767px) {
+  html {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 575px) {
+  html {
+    font-size: 0.75rem;
+  }
+}

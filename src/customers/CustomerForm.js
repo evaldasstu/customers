@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Modal, Form, Col } from 'react-bootstrap';
+import useMapboxApi from './useMapboxApi';
 
 const CustomerForm = ({
   selectedCustomer,
@@ -8,36 +9,34 @@ const CustomerForm = ({
   onModalClosed,
 }) => {
   const [customer, setCustomer] = useState(selectedCustomer);
-
-  const [lat, setLat] = useState(null);
-  const [lng, setLng] = useState(null);
-  const [coordinates, setCoordinates] = useState(null);
   const [validated, setValidated] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    setModalOpen(action === 'add' || action === 'update');
-  }, [action]);
+  const [{ coordinates, isError }] = useMapboxApi({ customer });
 
   useEffect(() => {
     setCustomer(selectedCustomer);
   }, [selectedCustomer]);
 
-  const firstInput = useRef();
   useEffect(() => {
-    if (modalOpen) {
-      firstInput.current.focus();
+    const injectCoordinates = customer;
+    if (coordinates) {
+      injectCoordinates.lat = coordinates[0];
+      injectCoordinates.lng = coordinates[1];
     }
-  }, [modalOpen]);
-
-  useEffect(() => {
-    setCoordinates(lat ? `${lat}, ${lng}` : '');
-  }, [lat, lng]);
+    setCustomer(injectCoordinates);
+  }, [customer, coordinates]);
 
   const onHide = () => {
     onModalClosed();
     setValidated(false);
   };
+
+  // Set focus to first form field on opening
+  const firstInput = useRef();
+  useEffect(() => {
+    if (action === 'add' || action === 'update') {
+      firstInput.current.focus();
+    }
+  }, [action]);
 
   // Make Bootstrap work with native HTML5 form validation
   const onSubmit = (e) => {
@@ -55,10 +54,10 @@ const CustomerForm = ({
 
   return (
     <Modal
-      show={modalOpen}
-      {...{ onHide }}
+      show={action === 'add' || action === 'update'}
       animation={false}
       backdrop="static"
+      {...{ onHide }}
       centered
     >
       <Modal.Header closeButton>
@@ -147,8 +146,12 @@ const CustomerForm = ({
           </Form.Row>
 
           <Form.Group controlId="coordinates">
-            <Form.Label>Coordinates</Form.Label>
-            <Form.Control value={coordinates} disabled />
+            <Form.Label>Predicted location</Form.Label>
+            <Form.Control
+              value={coordinates ? `${coordinates[0]}, ${coordinates[1]}` : ''}
+              placeholder={isError ? 'Could not fetch coordinates' : ''}
+              disabled
+            />
           </Form.Group>
         </Modal.Body>
 

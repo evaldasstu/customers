@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import customersStore from './store';
-import { loadState, saveState } from './localStorage';
+import { loadState, saveState } from './store/localStorage';
 import Customers from './customers/Customers';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
-// loadState and saveState persists data in local storage
+// loadState() and saveState() persists data in local storage
 const persistedState = loadState();
 const store = createStore(customersStore, persistedState);
 store.subscribe(() => {

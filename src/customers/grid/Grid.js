@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import './Grid.css';
 import Table from 'react-bootstrap/Table';
 import { useTable, useSortBy } from 'react-table';
 import { Header, Row, Cell } from './GridRenderers';
-import { columnSetup } from './GridTemplates';
+import { columnSetup } from './CellTemplates';
 import compareIgnoreCase from './sortHelper';
+import './Grid.css';
 
 const CustomersGrid = ({ customers, onEditClicked, onDeleteClicked }) => {
   const data = useMemo(() => customers, [customers]);
@@ -20,7 +20,7 @@ const CustomersGrid = ({ customers, onEditClicked, onDeleteClicked }) => {
       data,
       sortTypes: {
         alphanumeric: (row1, row2, columnName) => {
-          // Make sorting case-insensitive
+          // Case-insensitive sorting
           return compareIgnoreCase(
             row1.values[columnName],
             row2.values[columnName]
@@ -57,7 +57,7 @@ const CustomersGrid = ({ customers, onEditClicked, onDeleteClicked }) => {
       {!data.length && (
         <tfoot>
           <tr>
-            <td>No registered customers.</td>
+            <td colSpan="8"> No registered customers</td>
           </tr>
         </tfoot>
       )}

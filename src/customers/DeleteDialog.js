@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
 
 const DeleteDialog = ({
   customerToDelete,
@@ -7,20 +7,9 @@ const DeleteDialog = ({
   onDeleteConfirmed,
   onModalClosed,
 }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    setModalOpen(action === 'delete');
-  }, [action]);
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDeleteConfirmed();
-  };
 
   return (
-    <Modal show={modalOpen} onHide={onModalClosed} animation={false} centered>
+    <Modal show={action === 'delete'} onHide={onModalClosed} animation={false} centered>
       <Modal.Header closeButton>
         <Modal.Title>Delete customer</Modal.Title>
       </Modal.Header>
@@ -35,11 +24,9 @@ const DeleteDialog = ({
           Cancel
         </Button>
 
-        <Form {...{ onSubmit }}>
-          <Button variant="danger" type="submit">
+          <Button variant="danger" onClick={onDeleteConfirmed}>
             Delete customer
           </Button>
-        </Form>
       </Modal.Footer>
     </Modal>
   );
